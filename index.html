@@ -143,6 +143,22 @@
 .link-name{font-size:13px;font-weight:600;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .link-domain{font-size:11px;color:var(--color-text-tertiary);margin-top:1px;}
 
+/* ── Credential reveal ── */
+.cred-row{display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid var(--color-border-tertiary);}
+.cred-item{display:flex;align-items:center;gap:5px;flex:1;min-width:0;}
+.cred-label{font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;flex-shrink:0;}
+.cred-val{font-size:12px;font-weight:600;color:var(--color-text-primary);filter:blur(5px);transition:filter 0.25s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;user-select:none;}
+.cred-copy{font-size:10px;padding:2px 8px;border-radius:5px;border:1px solid var(--color-border-secondary);background:var(--color-background-secondary);cursor:pointer;color:var(--color-text-secondary);opacity:0;transition:opacity 0.2s;white-space:nowrap;flex-shrink:0;pointer-events:none;}
+.cred-copy.ok{color:var(--color-text-success);border-color:var(--color-text-success);}
+
+/* Reveal on hover of the whole card */
+.link-card.has-creds:hover .cred-val{filter:blur(0);user-select:text;}
+.link-card.has-creds:hover .cred-copy{opacity:1;pointer-events:auto;}
+.link-card.has-creds:hover .cred-copy:hover{background:var(--color-background-primary);color:var(--color-text-primary);}
+
+.link-card.has-creds{align-items:flex-start;flex-direction:column;}
+.link-card.has-creds .link-top{display:flex;align-items:center;gap:10px;width:100%;}
+
 /* ── Misc ── */
 .error-box{background:var(--color-background-danger);color:var(--color-text-danger);border-radius:10px;padding:0.75rem 1rem;font-size:13px;margin-bottom:1rem;}
 .loading{text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:14px;}
@@ -531,19 +547,20 @@ function renderLinks(){
   const sections=[
     {
       title:'📊 Schedules & Sheets',
-      color:'#3266ad',
       links:[
         {name:'Nike EYBL 2026 Schedules',url:'https://docs.google.com/spreadsheets/d/1_PdcNf4s3lz_8PvveR5bbU8J7PNnfJg5O-lH1hTKC1M/edit?gid=673872922#gid=673872922',icon:'🏀',bg:'#c85c1a'},
         {name:'Flohockey 2025-26',url:'https://docs.google.com/spreadsheets/d/1Kjl8eCZS9kHuKx7J0HOksprUvB6VvMMLYFS91LkuTCo/edit?gid=1369310667#gid=1369310667',icon:'🏑',bg:'#0f6e56'},
         {name:'NCAA Basketball DIII 2025-26',url:'https://docs.google.com/spreadsheets/d/1M8iCrEeaJdXUKwq_HrrbVVRO2L4BW6iGYMnWJBLKExc/edit?gid=1572806795#gid=1572806795',icon:'🏀',bg:'#5a3e99'},
-        {name:'Basketball Video Sources',url:'https://docs.google.com/document/d/1Z8JS_tDbP0cZoe3Ms2CGWUowqiZsT2ZyIVZOTk2UJrM/edit?tab=t.0',icon:'🏀',bg:'#c85c1a'},
+        {name:'Puma Pro 16',url:'https://docs.google.com/spreadsheets/d/1KK1iOfXFjWI5gVuHaloVNlMj_d7yBam4Osd4ixVhyV8/edit?gid=77574545#gid=77574545',icon:'⚽',bg:'#0f6e56'},
+        {name:'Instat Updates',url:'https://docs.google.com/spreadsheets/d/1eUmCJ0VoGykngh5vnJN9D5NZH4H46DPAqMQYEGQjuZI/edit?gid=0#gid=0',icon:'📈',bg:'#185fa5'},
+        {name:'Instat Upload & STA 2025-26',url:'https://docs.google.com/spreadsheets/d/1q6qLj-byiVHpsZ9VGf3aS1ierZvFSzdcnCONBqvV3v0/edit?gid=1654753578#gid=1654753578',icon:'📤',bg:'#534ab7'},
+        {name:'Basketball Video Sources',url:'https://docs.google.com/document/d/1Z8JS_tDbP0cZoe3Ms2CGWUowqiZsT2ZyIVZOTk2UJrM/edit?tab=t.0',icon:'📄',bg:'#c85c1a'},
         {name:'New Resources',url:'https://docs.google.com/spreadsheets/d/1PeacdzXgsNaQfxyDENr6_ZMH-V9Gbx_0/edit?gid=887418052#gid=887418052',icon:'📁',bg:'#1d9e75'},
         {name:'Shift Schedule',url:'https://docs.google.com/spreadsheets/d/15jnPn_OUK39gQmSB_ZrIcBOyO9ttYy9NnJIQICbO_bo/edit?gid=1589846917#gid=1589846917',icon:'📋',bg:'#534ab7'},
       ]
     },
     {
       title:'🎬 Upload & Video',
-      color:'#0c447c',
       links:[
         {name:'Upload Sessions — Hudl',url:'https://www.hudl.com/admin/externalingest/upload-sessions',icon:'☁️',bg:'#1d9e75'},
         {name:'Delete Video',url:'https://instatfootball.tv/support/delete/',icon:'🗑️',bg:'#e24b4a'},
@@ -551,21 +568,20 @@ function renderLinks(){
     },
     {
       title:'🏟️ Video Queues & Tools',
-      color:'#993c1d',
       links:[
         {name:'Basketball Video Queue',url:'https://data.instatfootball.tv/views_custom/datatables/video_queue_bb.php',icon:'🏀',bg:'#3266ad'},
         {name:'Hockey Video Queue',url:'https://data.instatfootball.tv/views_custom/analysis_matches_queue_for_ripper.php',icon:'🏒',bg:'#0066b2'},
         {name:'InStat Sports Calendar',url:'https://data.instatfootball.tv/rs_auth/',icon:'📅',bg:'#185fa5'},
         {name:'Wycoder Server',url:'https://wycoder.wyscout.com/',icon:'🖥️',bg:'#3b6d11'},
-      ]
+      ],
+      sharedCreds:{label:'InStat Login',user:'colleges@instatsport.com',pass:'78RColl42019'}
     },
   ];
 
+
   let html=`<div class="links-page">`;
   sections.forEach(s=>{
-    html+=`<div class="links-section">
-      <div class="links-section-title">${s.title}</div>
-      <div class="links-grid">`;
+    html+=`<div class="links-section"><div class="links-section-title">${s.title}</div><div class="links-grid">`;
     s.links.forEach(l=>{
       const domain=new URL(l.url).hostname.replace('www.','');
       html+=`<a class="link-card" href="${l.url}" target="_blank" rel="noopener">
@@ -577,10 +593,59 @@ function renderLinks(){
         <i class="ti ti-external-link" style="font-size:13px;color:var(--color-text-tertiary);margin-left:auto;flex-shrink:0;"></i>
       </a>`;
     });
+    // Shared credentials card — rendered once per section that has it
+    if(s.sharedCreds){
+      const c=s.sharedCreds;
+      html+=`<div class="link-card has-creds" style="cursor:default;">
+        <div class="link-top">
+          <div class="link-icon" style="background:#88878020;">🔐</div>
+          <div class="link-info">
+            <div class="link-name">${c.label}</div>
+            <div class="link-domain">Hover to reveal</div>
+          </div>
+        </div>
+        <div class="cred-row">
+          <div class="cred-item">
+            <span class="cred-label">User</span>
+            <span class="cred-val">${c.user}</span>
+            <button class="cred-copy" data-copy="${c.user}">Copy</button>
+          </div>
+          <div class="cred-item">
+            <span class="cred-label">Pass</span>
+            <span class="cred-val">${c.pass}</span>
+            <button class="cred-copy" data-copy="${c.pass}">Copy</button>
+          </div>
+        </div>
+      </div>`;
+    }
     html+=`</div></div>`;
   });
   html+=`</div>`;
   document.getElementById('links-content').innerHTML=html;
+
+  // Attach copy listeners after DOM is set
+  document.querySelectorAll('.cred-copy').forEach(btn=>{
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const text=this.dataset.copy;
+      navigator.clipboard.writeText(text).then(()=>{
+        this.textContent='✓';
+        this.classList.add('ok');
+        setTimeout(()=>{this.textContent='Copy';this.classList.remove('ok');},1500);
+      }).catch(()=>{
+        // Fallback for browsers that block clipboard
+        const ta=document.createElement('textarea');
+        ta.value=text;
+        ta.style.position='fixed';ta.style.opacity='0';
+        document.body.appendChild(ta);ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        this.textContent='✓';this.classList.add('ok');
+        setTimeout(()=>{this.textContent='Copy';this.classList.remove('ok');},1500);
+      });
+    });
+  });
 }
 </script>
 </body></html>
