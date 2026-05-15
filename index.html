@@ -116,24 +116,58 @@
 .summary-label{color:var(--color-text-secondary);display:flex;align-items:center;gap:4px;}
 .summary-val{font-weight:600;color:var(--color-text-primary);}
 
+/* ── Page nav tabs ── */
+.page-tabs{display:flex;gap:4px;background:var(--color-background-secondary);padding:4px;border-radius:10px;border:1px solid var(--color-border-tertiary);}
+.page-tab{padding:6px 14px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--color-text-secondary);transition:background 0.15s,color 0.15s,box-shadow 0.15s;display:flex;align-items:center;}
+.page-tab:hover:not(.active){background:var(--color-background-primary);color:var(--color-text-primary);}
+.page-tab.active{background:var(--color-background-primary);color:var(--color-text-primary);box-shadow:0 1px 4px rgba(0,0,0,0.12);font-weight:600;}
+
+/* ── Links page ── */
+.links-page{padding:4px 0;}
+.links-section{margin-bottom:1.25rem;}
+.links-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--color-text-tertiary);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
+.link-card{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:10px;
+  border:1px solid var(--color-border-tertiary);
+  background:var(--color-background-primary);
+  text-decoration:none;color:var(--color-text-primary);
+  transition:background 0.15s,box-shadow 0.15s,transform 0.1s;
+  cursor:pointer;
+}
+.link-card:hover{background:var(--color-background-secondary);box-shadow:0 2px 8px rgba(0,0,0,0.1);transform:translateY(-1px);}
+.link-card:active{transform:scale(0.98);}
+.link-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
+.link-info{min-width:0;}
+.link-name{font-size:13px;font-weight:600;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.link-domain{font-size:11px;color:var(--color-text-tertiary);margin-top:1px;}
+
 /* ── Misc ── */
 .error-box{background:var(--color-background-danger);color:var(--color-text-danger);border-radius:10px;padding:0.75rem 1rem;font-size:13px;margin-bottom:1rem;}
 .loading{text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:14px;}
 </style>
 
 <div class="header">
-  <div class="shift-tabs">
-    <button class="tab active" onclick="setShift('Morning')"><i class="ti ti-sun" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Morning</button>
-    <button class="tab" onclick="setShift('Afternoon')"><i class="ti ti-sun-high" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Afternoon</button>
-    <button class="tab" onclick="setShift('Night')"><i class="ti ti-moon" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Night</button>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="page-tabs">
+      <button class="page-tab active" onclick="setPage('dashboard')"><i class="ti ti-layout-dashboard" style="font-size:13px;margin-right:4px;vertical-align:-1px"></i>Dashboard</button>
+      <button class="page-tab" onclick="setPage('links')"><i class="ti ti-link" style="font-size:13px;margin-right:4px;vertical-align:-1px"></i>Links</button>
+    </div>
+    <div class="shift-tabs" id="shift-tabs">
+      <button class="tab active" onclick="setShift('Morning')"><i class="ti ti-sun" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Morning</button>
+      <button class="tab" onclick="setShift('Afternoon')"><i class="ti ti-sun-high" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Afternoon</button>
+      <button class="tab" onclick="setShift('Night')"><i class="ti ti-moon" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Night</button>
+    </div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <span style="font-size:13px;color:var(--color-text-secondary);" id="date-label"></span>
-    <button class="refresh-btn" onclick="loadAll()"><i class="ti ti-refresh" aria-hidden="true" style="font-size:13px"></i>Refresh</button>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadAll()"><i class="ti ti-refresh" aria-hidden="true" style="font-size:13px"></i>Refresh</button>
   </div>
 </div>
 <div id="error-area"></div>
 <div id="main-content"><div class="loading"><i class="ti ti-loader" style="font-size:20px"></i><br>Loading shift data...</div></div>
+<div id="links-content" style="display:none;"></div>
 
 <script>
 const API_KEY='AIzaSyAK-bF8Y3R9dT_EfJAn8LIpiqktu4Ki5_8';
@@ -480,5 +514,73 @@ function render(){
 
 setDateLabel();
 loadAll();
+
+// ── Page switching ──
+function setPage(page){
+  document.querySelectorAll('.page-tab').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase().includes(page==='dashboard'?'dashboard':'link')));
+  const isDash=page==='dashboard';
+  document.getElementById('main-content').style.display=isDash?'':'none';
+  document.getElementById('error-area').style.display=isDash?'':'none';
+  document.getElementById('links-content').style.display=isDash?'none':'';
+  document.getElementById('shift-tabs').style.display=isDash?'':'none';
+  document.getElementById('refresh-btn').style.display=isDash?'':'none';
+  if(!isDash) renderLinks();
+}
+
+function renderLinks(){
+  const sections=[
+    {
+      title:'📊 Schedules & Sheets',
+      color:'#3266ad',
+      links:[
+        {name:'Nike EYBL 2026 Schedules',url:'https://docs.google.com/spreadsheets/d/1_PdcNf4s3lz_8PvveR5bbU8J7PNnfJg5O-lH1hTKC1M/edit?gid=673872922#gid=673872922',icon:'🏀',bg:'#c85c1a'},
+        {name:'Flohockey 2025-26',url:'https://docs.google.com/spreadsheets/d/1Kjl8eCZS9kHuKx7J0HOksprUvB6VvMMLYFS91LkuTCo/edit?gid=1369310667#gid=1369310667',icon:'🏑',bg:'#0f6e56'},
+        {name:'NCAA Basketball DIII 2025-26',url:'https://docs.google.com/spreadsheets/d/1M8iCrEeaJdXUKwq_HrrbVVRO2L4BW6iGYMnWJBLKExc/edit?gid=1572806795#gid=1572806795',icon:'🏀',bg:'#5a3e99'},
+        {name:'Basketball Video Sources',url:'https://docs.google.com/document/d/1Z8JS_tDbP0cZoe3Ms2CGWUowqiZsT2ZyIVZOTk2UJrM/edit?tab=t.0',icon:'🏀',bg:'#c85c1a'},
+        {name:'New Resources',url:'https://docs.google.com/spreadsheets/d/1PeacdzXgsNaQfxyDENr6_ZMH-V9Gbx_0/edit?gid=887418052#gid=887418052',icon:'📁',bg:'#1d9e75'},
+        {name:'Shift Schedule',url:'https://docs.google.com/spreadsheets/d/15jnPn_OUK39gQmSB_ZrIcBOyO9ttYy9NnJIQICbO_bo/edit?gid=1589846917#gid=1589846917',icon:'📋',bg:'#534ab7'},
+      ]
+    },
+    {
+      title:'🎬 Upload & Video',
+      color:'#0c447c',
+      links:[
+        {name:'Upload Sessions — Hudl',url:'https://www.hudl.com/admin/externalingest/upload-sessions',icon:'☁️',bg:'#1d9e75'},
+        {name:'Delete Video',url:'https://instatfootball.tv/support/delete/',icon:'🗑️',bg:'#e24b4a'},
+      ]
+    },
+    {
+      title:'🏟️ Video Queues & Tools',
+      color:'#993c1d',
+      links:[
+        {name:'Basketball Video Queue',url:'https://data.instatfootball.tv/views_custom/datatables/video_queue_bb.php',icon:'🏀',bg:'#3266ad'},
+        {name:'Hockey Video Queue',url:'https://data.instatfootball.tv/views_custom/analysis_matches_queue_for_ripper.php',icon:'🏒',bg:'#0066b2'},
+        {name:'InStat Sports Calendar',url:'https://data.instatfootball.tv/rs_auth/',icon:'📅',bg:'#185fa5'},
+        {name:'Wycoder Server',url:'https://wycoder.wyscout.com/',icon:'🖥️',bg:'#3b6d11'},
+      ]
+    },
+  ];
+
+  let html=`<div class="links-page">`;
+  sections.forEach(s=>{
+    html+=`<div class="links-section">
+      <div class="links-section-title">${s.title}</div>
+      <div class="links-grid">`;
+    s.links.forEach(l=>{
+      const domain=new URL(l.url).hostname.replace('www.','');
+      html+=`<a class="link-card" href="${l.url}" target="_blank" rel="noopener">
+        <div class="link-icon" style="background:${l.bg}20;">${l.icon}</div>
+        <div class="link-info">
+          <div class="link-name">${l.name}</div>
+          <div class="link-domain">${domain}</div>
+        </div>
+        <i class="ti ti-external-link" style="font-size:13px;color:var(--color-text-tertiary);margin-left:auto;flex-shrink:0;"></i>
+      </a>`;
+    });
+    html+=`</div></div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('links-content').innerHTML=html;
+}
 </script>
 </body></html>
