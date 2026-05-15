@@ -398,10 +398,25 @@ function render(){
   });
   const maxC=Math.max(...Object.values(taskCounts),1);
 
-  let copyText=`Shift count for ${currentShift} shift — ${new Date().toLocaleDateString('en-IN')}\n`;
-  copyText+=`POC: ${poc||'—'}\n`;
-  copyText+=`Expected: ${expected.length} | Present: ${fmt(presentCount)} | WO: ${woCount} | Leave: ${fmt(leaveCount)}\n\nTask breakdown:\n`;
-  Object.entries(taskCounts).sort((a,b)=>b[1]-a[1]).forEach(([t,c])=>{copyText+=`${t}: ${fmt(c)}\n`;});
+  const taskEmoji={
+    'EYBL BB':'🏀','NCAA DIII BB':'🏀','Georgia BB':'🏀',
+    'Flohockey HK':'🏑','Georgia HK':'🏑','NHL':'🏒',
+    'Upload Sessions':'☁️','Video Upload':'🎬','Video upload':'🎬',
+    'STA':'📊','Sheet Work':'📋','Queue Handling':'📥',
+    'Source Finding':'🔍','N/A games check':'✅',
+    'Training':'📚','Trainer':'🏆','Others':'📌',
+    'WO':'🚫','Holiday':'🌴','H/D':'🏠',
+    'Unplanned leave':'❌','Planned leave':'🗓️',
+  };
+
+  const shiftEmoji={'Morning':'🌅','Afternoon':'☀️','Night':'🌙'};
+  let copyText=`${shiftEmoji[currentShift]||''} *Shift count — ${currentShift} shift* | ${new Date().toLocaleDateString('en-IN')}\n`;
+  copyText+=`👤 *POC:* ${poc||'—'}\n\n`;
+  copyText+=`👥 Expected: *${expected.length}*   ✅ Present: *${fmt(presentCount)}*   🚫 WO: *${woCount}*   ❌ Leave: *${fmt(leaveCount)}*\n\n`;
+  copyText+=`📋 *Task Breakdown:*\n`;
+  Object.entries(taskCounts).sort((a,b)=>b[1]-a[1]).forEach(([t,c])=>{
+    copyText+=`${taskEmoji[t]||'▪️'} ${t}: *${fmt(c)}*\n`;
+  });
 
   let breakdownHtml=`<div class="card">
     <div class="card-title" style="justify-content:space-between;">
