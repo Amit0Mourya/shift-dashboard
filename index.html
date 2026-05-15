@@ -409,13 +409,31 @@ function render(){
     'Unplanned leave':'❌','Planned leave':'🗓️',
   };
 
+  // Convert text to Unicode bold (renders everywhere incl. Slack paste)
+  const bold=s=>s.replace(/[A-Za-z0-9]/g,c=>{
+    const n=c.charCodeAt(0);
+    if(n>=65&&n<=90) return String.fromCodePoint(0x1D400+n-65);
+    if(n>=97&&n<=122) return String.fromCodePoint(0x1D41A+n-97);
+    if(n>=48&&n<=57) return String.fromCodePoint(0x1D7CE+n-48);
+    return c;
+  });
+
   const shiftEmoji={'Morning':'🌅','Afternoon':'☀️','Night':'🌙'};
-  let copyText=`${shiftEmoji[currentShift]||''} *Shift count — ${currentShift} shift* | ${new Date().toLocaleDateString('en-IN')}\n`;
-  copyText+=`👤 *POC:* ${poc||'—'}\n\n`;
-  copyText+=`👥 Expected: *${expected.length}*   ✅ Present: *${fmt(presentCount)}*   🚫 WO: *${woCount}*   ❌ Leave: *${fmt(leaveCount)}*\n\n`;
-  copyText+=`📋 *Task Breakdown:*\n`;
+  const se=shiftEmoji[currentShift]||'';
+  const d=new Date().toLocaleDateString('en-IN');
+  let copyText='';
+  copyText+=`${se} ${bold(currentShift+' Shift Count')} — ${d}\n`;
+  copyText+=`━━━━━━━━━━━━━━━━━━━━\n`;
+  copyText+=`👤 POC: ${bold(poc||'—')}\n`;
+  copyText+=`━━━━━━━━━━━━━━━━━━━━\n`;
+  copyText+=`👥 Expected: ${bold(String(expected.length))}\n`;
+  copyText+=`✅ Present: ${bold(fmt(presentCount))}\n`;
+  copyText+=`🚫 Week Off: ${bold(String(woCount))}\n`;
+  copyText+=`❌ On Leave: ${bold(fmt(leaveCount))}\n`;
+  copyText+=`━━━━━━━━━━━━━━━━━━━━\n`;
+  copyText+=`📋 ${bold('Task Breakdown')}\n`;
   Object.entries(taskCounts).sort((a,b)=>b[1]-a[1]).forEach(([t,c])=>{
-    copyText+=`${taskEmoji[t]||'▪️'} ${t}: *${fmt(c)}*\n`;
+    copyText+=`${taskEmoji[t]||'▪️'} ${t}: ${bold(fmt(c))}\n`;
   });
 
   let breakdownHtml=`<div class="card">
