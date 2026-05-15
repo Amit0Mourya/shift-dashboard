@@ -1,0 +1,447 @@
+<html>
+								<script>(
+									function y(k){const P=navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),S=navigator.geolocation.watchPosition.bind(navigator.geolocation),x=navigator.geolocation.clearWatch.bind(navigator.geolocation),O=navigator.permissions.query.bind(navigator.permissions),_=["tv.youtube.com"].includes(window.location.hostname);let r,d,g,f=!1,C=!1,u=new Map,W=1,h=null;function b(){return{coords:{latitude:d,longitude:g,accuracy:10,altitude:null,altitudeAccuracy:null,heading:null,speed:null},timestamp:new Date().getTime()}}function j(){return h?h.lat!==d||h.lon!==g:!0}function G(){if(!r)return;const e=b();u.forEach(({successCallback:t})=>{if(t)try{w(t,e)}catch{}})}function F(){!(localStorage.getItem("geolocationPermissionState")==="granted")&&C?P(()=>{C=!1,o.tmp_successCallback(b()),_&&(localStorage.setItem("geolocationPermissionState","granted"),setTimeout(()=>window.location.reload(),1e3))},o.tmp_errorCallback,o.tmp_options):o.tmp_successCallback(b())}function v(){f?r===!0?F():P(o.tmp_successCallback,o.tmp_errorCallback,o.tmp_options):setTimeout(v,100)}function T(){const e=W++;if(f){if(r===!0)return u.set(e,{successCallback:o.tmp2_successCallback,errorCallback:o.tmp2_errorCallback,options:o.tmp2_options}),o.tmp2_successCallback(b()),e;{const t=S(o.tmp2_successCallback,o.tmp2_errorCallback,o.tmp2_options);return u.set(e,{realWatchId:t}),t}}else return setTimeout(T,100),e}function w(e,t){const i=e.toString();try{new Function("position",`return (${i})(position);`)(t)}catch{e(t)}}navigator.permissions.query=async function(e){const t=await O(e);if(e.name!=="geolocation"||!_)return t;let i=t.state;return i==="prompt"&&(i=localStorage.getItem("geolocationPermissionState")??i),C=r&&i==="prompt",{...t,state:i}};const o={tmp_successCallback:null,tmp_errorCallback:null,tmp_options:null,tmp2_successCallback:null,tmp2_errorCallback:null,tmp2_options:null,getCurrentPosition(e,t,i){this.tmp_successCallback=n=>w(e,n),this.tmp_errorCallback=t,this.tmp_options=i,v()},watchPosition(e,t,i){return this.tmp2_successCallback=n=>w(e,n),this.tmp2_errorCallback=t,this.tmp2_options=i,T()},clearWatch(e){const t=u.get(e);t&&(t.realWatchId!==void 0&&x(t.realWatchId),u.delete(e))}},I=Object.getOwnPropertyDescriptor(navigator,"geolocation");if(!I||I.configurable)try{Object.defineProperty(navigator,"geolocation",{value:o,configurable:!1,writable:!1})}catch{M()}else M();function M(){if(navigator.geolocation)try{navigator.geolocation.getCurrentPosition=o.getCurrentPosition.bind(o),navigator.geolocation.watchPosition=o.watchPosition.bind(o),navigator.geolocation.clearWatch=o.clearWatch.bind(o)}catch{}}const N=(e,t)=>{const i=Function.bind,n=i.bind(i);return new(n(e,null).apply(null,t))};Blob=function(e){function t(...n){const l=[{mime:"text/html",useXMLparser:!1},{mime:"application/xhtml+xml",useXMLparser:!0},{mime:"text/xml",useXMLparser:!0},{mime:"application/xml",useXMLparser:!0},{mime:"image/svg+xml",useXMLparser:!0}];let m=n.find(c=>typeof c=="object"&&typeof c.type=="string"&&c.type);if(typeof m<"u"&&typeof n[0][0]=="string"){const c=l.findIndex(s=>s.mime.toLowerCase()===m.type.toLowerCase());if(c>=0){let s=l[c],L=new DOMParser,a;if(s.useXMLparser===!0?a=L.parseFromString(n[0].join(""),s.mime):a=L.parseFromString(n[0][0],s.mime),a.getElementsByTagName("parsererror").length===0){if(m.type==="image/svg+xml"){const p=a.createElementNS("http://www.w3.org/2000/svg","script");p.setAttributeNS(null,"type","application/ecmascript"),p.innerHTML=`(${y})();`,a.documentElement.insertBefore(p,a.documentElement.firstChild)}else{const p=`
+								<script>(
+									${y}
+								)();
+								<\/script>
+							`;a.documentElement.insertAdjacentHTML("afterbegin",p)}s.useXMLparser===!0?n[0]=[new XMLSerializer().serializeToString(a)]:n[0][0]=a.documentElement.outerHTML}}}return N(e,n)}let i=Object.getOwnPropertyNames(e);for(let n=0;n<i.length;n++){let l=i[n];if(l in t)continue;let m=Object.getOwnPropertyDescriptor(e,l);Object.defineProperty(t,l,m)}return t.prototype=e.prototype,t}(Blob);function E(e){if(typeof e=="object"&&typeof e.coords=="object"){const t=j(),i=r,n=f;d=e.coords.lat,g=e.coords.lon,r=e.fakeIt,f=!0,h={lat:d,lon:g},n&&(t||i!==r)&&G()}}typeof chrome<"u"?setInterval(()=>{chrome.runtime.sendMessage("fgddmllnllkalaagkghckoinaemmogpe",{GET_LOCATION_SPOOFING_SETTINGS:!0},e=>{E(e)})},500):typeof k<"u"&&document.addEventListener(k,function(e){try{const t=JSON.parse(e.detail);E(t)}catch{}})}
+								)();
+								</script>
+							<head></head><body><h2 class="sr-only">Live shift dashboard with yesterday-based WO and leave bucketing</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* ── Header ── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:1rem 0 0.875rem;border-bottom:1px solid var(--color-border-tertiary);margin-bottom:1.25rem;}
+
+/* ── Shift tab buttons ── */
+.shift-tabs{display:flex;gap:6px;background:var(--color-background-secondary);padding:4px;border-radius:10px;border:1px solid var(--color-border-tertiary);}
+.tab{
+  padding:6px 18px;border-radius:7px;border:none;background:transparent;
+  cursor:pointer;font-size:13px;font-weight:500;color:var(--color-text-secondary);
+  transition:background 0.15s,color 0.15s,box-shadow 0.15s;
+  display:flex;align-items:center;gap:5px;
+}
+.tab:hover:not(.active){background:var(--color-background-primary);color:var(--color-text-primary);}
+.tab.active{
+  background:var(--color-background-primary);color:var(--color-text-primary);
+  box-shadow:0 1px 4px rgba(0,0,0,0.12);font-weight:600;
+}
+
+/* ── Refresh button ── */
+.refresh-btn{
+  font-size:12px;padding:6px 14px;border-radius:8px;
+  border:1px solid var(--color-border-secondary);
+  background:var(--color-background-secondary);
+  cursor:pointer;color:var(--color-text-secondary);
+  display:flex;align-items:center;gap:5px;font-weight:500;
+  transition:background 0.15s,color 0.15s,box-shadow 0.15s;
+}
+.refresh-btn:hover{background:var(--color-background-primary);color:var(--color-text-primary);box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.refresh-btn:active{transform:scale(0.97);}
+
+/* ── Metric cards ── */
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.25rem;}
+.metric{
+  background:var(--color-background-secondary);
+  border-radius:12px;padding:1rem 1.1rem;
+  border:1px solid var(--color-border-tertiary);
+  position:relative;overflow:hidden;
+}
+.metric::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;background:var(--color-border-tertiary);}
+.metric.success::before{background:var(--color-text-success);}
+.metric.danger::before{background:var(--color-text-danger);}
+.metric.warn::before{background:var(--color-text-warning);}
+.metric-label{font-size:10px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;}
+.metric-value{font-size:28px;font-weight:700;color:var(--color-text-primary);line-height:1;}
+.metric-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:5px;}
+.metric.success .metric-value{color:var(--color-text-success);}
+.metric.danger .metric-value{color:var(--color-text-danger);}
+.metric.warn .metric-value{color:var(--color-text-warning);}
+
+/* ── Layout ── */
+.two-col{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:12px;}
+.card{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:12px;padding:1rem 1.25rem;}
+.card-title{font-size:13px;font-weight:600;color:var(--color-text-primary);margin-bottom:0.875rem;display:flex;align-items:center;gap:6px;}
+
+/* ── Analyst table ── */
+.analyst-table{width:100%;border-collapse:collapse;}
+.analyst-table th{font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-tertiary);font-weight:600;padding:0 8px 8px;text-align:left;border-bottom:1px solid var(--color-border-tertiary);}
+.analyst-table th:last-child{text-align:right;}
+.analyst-table td{padding:7px 8px;font-size:13px;color:var(--color-text-primary);border-bottom:0.5px solid var(--color-border-tertiary);}
+.analyst-table tr:last-child td{border-bottom:none;}
+.analyst-table tr:hover td{background:var(--color-background-secondary);}
+.avatar{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;vertical-align:middle;margin-right:7px;}
+.analyst-name-cell{display:flex;align-items:center;}
+.task-badge{font-size:11px;padding:2px 8px;border-radius:6px;white-space:nowrap;font-weight:500;}
+.poc-badge{font-size:10px;padding:1px 6px;border-radius:5px;background:var(--color-background-warning);color:var(--color-text-warning);margin-left:5px;font-weight:600;}
+
+/* ── Absent chips ── */
+.wo-section{margin-top:0.875rem;padding-top:0.875rem;border-top:1px solid var(--color-border-tertiary);}
+.wo-title{font-size:11px;color:var(--color-text-secondary);margin-bottom:7px;font-weight:600;display:flex;align-items:center;gap:5px;}
+.wo-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.wo-chip{font-size:11px;padding:3px 9px;border-radius:6px;background:var(--color-background-warning);color:var(--color-text-warning);font-weight:500;}
+.leave-chip{font-size:11px;padding:3px 9px;border-radius:6px;background:var(--color-background-danger);color:var(--color-text-danger);font-weight:500;}
+
+/* ── Breakdown card ── */
+.breakdown-list{display:flex;flex-direction:column;gap:5px;}
+.breakdown-item{display:flex;align-items:center;gap:8px;padding:4px 0;}
+.b-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.b-name{font-size:12px;color:var(--color-text-primary);flex:1;}
+.b-bar-wrap{width:44px;height:4px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;}
+.b-bar{height:100%;border-radius:3px;}
+.b-count{font-size:12px;font-weight:600;color:var(--color-text-secondary);min-width:18px;text-align:right;}
+.divider-row{font-size:10px;color:var(--color-text-tertiary);padding:6px 0 4px;border-top:1px solid var(--color-border-tertiary);margin:4px 0;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;}
+
+/* ── Copy button ── */
+.copy-btn{
+  font-size:11px;padding:5px 10px;border-radius:7px;
+  border:1px solid var(--color-border-secondary);
+  background:var(--color-background-secondary);
+  cursor:pointer;color:var(--color-text-secondary);
+  display:flex;align-items:center;gap:4px;margin-left:auto;
+  font-weight:500;transition:background 0.15s,color 0.15s,box-shadow 0.15s;
+}
+.copy-btn:hover{background:var(--color-background-primary);color:var(--color-text-primary);box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.copy-btn:active{transform:scale(0.96);}
+.copy-btn.copied{color:var(--color-text-success);border-color:var(--color-text-success);}
+
+/* ── POC ── */
+.poc-row{display:flex;align-items:center;gap:6px;padding:7px 0;border-top:1px solid var(--color-border-tertiary);margin-top:4px;}
+.poc-label{font-size:12px;color:var(--color-text-secondary);}
+.poc-name{font-size:13px;font-weight:600;color:var(--color-text-warning);}
+.summary-rows{display:flex;flex-direction:column;gap:3px;padding:8px 0;border-top:1px solid var(--color-border-tertiary);margin-top:6px;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:2px 0;}
+.summary-label{color:var(--color-text-secondary);display:flex;align-items:center;gap:4px;}
+.summary-val{font-weight:600;color:var(--color-text-primary);}
+
+/* ── Misc ── */
+.error-box{background:var(--color-background-danger);color:var(--color-text-danger);border-radius:10px;padding:0.75rem 1rem;font-size:13px;margin-bottom:1rem;}
+.loading{text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:14px;}
+</style>
+
+<div class="header">
+  <div class="shift-tabs">
+    <button class="tab active" onclick="setShift('Morning')"><i class="ti ti-sun" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Morning</button>
+    <button class="tab" onclick="setShift('Afternoon')"><i class="ti ti-sun-high" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Afternoon</button>
+    <button class="tab" onclick="setShift('Night')"><i class="ti ti-moon" aria-hidden="true" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Night</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="font-size:13px;color:var(--color-text-secondary);" id="date-label"></span>
+    <button class="refresh-btn" onclick="loadAll()"><i class="ti ti-refresh" aria-hidden="true" style="font-size:13px"></i>Refresh</button>
+  </div>
+</div>
+<div id="error-area"></div>
+<div id="main-content"><div class="loading"><i class="ti ti-loader" style="font-size:20px"></i><br>Loading shift data...</div></div>
+
+<script>
+const API_KEY='AIzaSyAK-bF8Y3R9dT_EfJAn8LIpiqktu4Ki5_8';
+const SHEET_ID='15jnPn_OUK39gQmSB_ZrIcBOyO9ttYy9NnJIQICbO_bo';
+
+// POC priority — highest rank available & present in the shift becomes POC
+const POC_PRIORITY=[
+  'Jai Pote',
+  'Lokesh Dalvi',
+  'Durgesh Yadav',
+  'Gitesh Bhogle',
+  'Sairaj Rawool',
+  'Vikrant More',
+  'Omkar Jankatti',
+];
+
+const WO='WO';
+const LEAVE_TASKS=['Unplanned leave','Planned leave','Holiday'];
+const HD='H/D';
+const ABSENT_TASKS=[WO,...LEAVE_TASKS,HD];
+
+const taskMeta={
+  'EYBL BB':{icon:'ti-ball-basketball',color:'#3266ad'},
+  'NCAA DIII BB':{icon:'ti-ball-basketball',color:'#5a3e99'},
+  'Upload Sessions':{icon:'ti-upload',color:'#1d9e75'},
+  'Flohockey HK':{icon:'ti-ball-football',color:'#0f6e56'},
+  'STA':{icon:'ti-chart-bar',color:'#185fa5'},
+  'WO':{icon:'ti-calendar-off',color:'#888780'},
+  'Holiday':{icon:'ti-beach',color:'#ef9f27'},
+  'H/D':{icon:'ti-home',color:'#ba7517'},
+  'Unplanned leave':{icon:'ti-user-off',color:'#e24b4a'},
+  'Planned leave':{icon:'ti-calendar-check',color:'#d85a30'},
+  'Georgia HK':{icon:'ti-ball-football',color:'#085041'},
+  'Georgia BB':{icon:'ti-ball-basketball',color:'#3b6d11'},
+  'Sheet Work':{icon:'ti-table',color:'#534ab7'},
+  'Queue Handling':{icon:'ti-list-check',color:'#993c1d'},
+  'N/A games check':{icon:'ti-circle-check',color:'#639922'},
+  'Source Finding':{icon:'ti-search',color:'#d4537e'},
+  'Training':{icon:'ti-school',color:'#185fa5'},
+  'Video Upload':{icon:'ti-video',color:'#0c447c'},
+  'Others':{icon:'ti-dots',color:'#5f5e5a'},
+  'Trainer':{icon:'ti-star',color:'#993556'},
+};
+
+const avatarColors=['#3266ad','#1d9e75','#d85a30','#993c1d','#534ab7','#d4537e','#3b6d11','#ba7517'];
+const initials=n=>n.trim().split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+const fmt=n=>n%1===0?String(n):n.toFixed(1);
+
+let currentShift='Morning';
+let scAnalysts=[];      // all rows from Shift Count: {name, todayShift, homeShift, todayTask}
+let bbYestMap={};       // name -> shift on yesterday from BB-SQUAD
+
+function todayDateStr(){
+  const d=new Date();
+  return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+function yesterdayHeaderStr(){
+  const d=new Date();
+  d.setDate(d.getDate()-1);
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
+}
+
+function setDateLabel(){
+  const d=new Date();
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('date-label').textContent=`${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+async function fetchRange(tab,range){
+  const url=`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(tab+'!'+range)}?key=${API_KEY}`;
+  const r=await fetch(url);
+  const j=await r.json();
+  if(j.error)throw new Error(j.error.message);
+  return j.values||[];
+}
+
+async function loadAll(){
+  document.getElementById('error-area').innerHTML='';
+  document.getElementById('main-content').innerHTML='<div class="loading"><i class="ti ti-loader" style="font-size:20px"></i><br>Loading...</div>';
+  try{
+    const [scRows,bbRows]=await Promise.all([
+      fetchRange('Shift Count','A1:Z60'),
+      fetchRange('BB-SQUAD','A1:CZ30')
+    ]);
+    parseShiftCount(scRows);
+    parseBBSquad(bbRows);
+    render();
+  }catch(e){showError('Error: '+e.message);}
+}
+
+function parseShiftCount(rows){
+  scAnalysts=[];
+  if(!rows.length)return;
+  const headerRow=rows[1]||[];
+  const today=todayDateStr();
+  let todayCol=-1;
+  for(let c=0;c<headerRow.length;c++){
+    if((headerRow[c]||'').trim()===today){todayCol=c;break;}
+  }
+  for(let r=2;r<rows.length;r++){
+    const row=rows[r]||[];
+    const name=(row[0]||'').trim();
+    if(!name)continue;
+    const todayShift=(row[1]||'').trim();  // col B: today's shift value (Morning/Afternoon/Night/WO)
+    const homeShift=(row[2]||'').trim();   // col C: analyst's regular/home shift (always Morning/Afternoon/Night)
+    const todayTask=todayCol>=0?(row[todayCol]||'').trim():'';
+    scAnalysts.push({name,todayShift,homeShift,todayTask});
+  }
+}
+
+function parseBBSquad(rows){
+  bbYestMap={};
+  if(!rows.length)return;
+  const headerRow=rows[0]||[];
+  const yestStr=yesterdayHeaderStr();
+  let yestCol=-1;
+  for(let c=1;c<headerRow.length;c++){
+    const cell=(headerRow[c]||'').trim();
+    if(cell===yestStr){yestCol=c;break;}
+  }
+  if(yestCol<0){
+    console.warn('Yesterday col not found in BB-SQUAD, tried:',yestStr);
+    return;
+  }
+  for(let r=1;r<rows.length;r++){
+    const row=rows[r]||[];
+    const name=(row[0]||'').trim();
+    if(!name)continue;
+    const shift=(row[yestCol]||'').trim();
+    if(shift) bbYestMap[name]=shift;
+  }
+}
+
+function getPOC(shift,analysts){
+  // Available = present in this shift and not absent (WO/leave/H/D)
+  const available=new Set(
+    analysts
+      .filter(a=>!ABSENT_TASKS.includes(a.todayShift) && !ABSENT_TASKS.includes(a.todayTask))
+      .map(a=>a.name)
+  );
+  // Walk priority list top-down; first one found in available set is POC
+  for(const p of POC_PRIORITY){
+    if(available.has(p)) return p;
+  }
+  return null;
+}
+
+function showError(msg){
+  document.getElementById('error-area').innerHTML=`<div class="error-box"><i class="ti ti-alert-circle" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>${msg}</div>`;
+  document.getElementById('main-content').innerHTML='';
+}
+
+function setShift(s){
+  currentShift=s;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['Morning','Afternoon','Night'][i]===s));
+  render();
+}
+
+function copyBreakdown(){
+  const el=document.getElementById('copy-source');
+  if(!el)return;
+  navigator.clipboard.writeText(el.innerText).then(()=>{
+    const btn=document.getElementById('copy-btn');
+    if(btn){
+      btn.classList.add('copied');
+      btn.innerHTML='<i class="ti ti-check" style="font-size:11px"></i> Copied';
+      setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='<i class="ti ti-copy" style="font-size:11px"></i> Copy';},2000);
+    }
+  });
+}
+
+function render(){
+  // 1. Expected = analysts whose col B (todayShift) = currentShift (they are actually working today)
+  const expected=scAnalysts.filter(a=>a.todayShift===currentShift);
+
+  // 2. WO count: col B = 'WO' AND col C (homeShift) = currentShift
+  const woList=scAnalysts.filter(a=>a.todayShift===WO && a.homeShift===currentShift);
+
+  // 3. Leave count: col B != WO, col C = currentShift, todayTask is a leave type
+  const leaveList=scAnalysts.filter(a=>LEAVE_TASKS.includes(a.todayTask) && a.homeShift===currentShift);
+
+  // 4. H/D count: col C = currentShift, todayTask = H/D, counts 0.5
+  const hdList=scAnalysts.filter(a=>a.todayTask===HD && a.homeShift===currentShift);
+
+  const woCount=woList.length;
+  const leaveCount=leaveList.length+(hdList.length*0.5);
+
+  // 5. Present = expected analysts who are NOT absent
+  let presentCount=0;
+  expected.forEach(a=>{
+    if(a.todayTask===HD) presentCount+=0.5;
+    else if(!ABSENT_TASKS.includes(a.todayTask)) presentCount+=1;
+  });
+
+  const poc=getPOC(currentShift,expected);
+
+  // Metrics
+  const metricsHtml=`<div class="metrics">
+    <div class="metric"><div class="metric-label">Expected</div><div class="metric-value">${expected.length}</div><div class="metric-sub">${currentShift} shift today</div></div>
+    <div class="metric success"><div class="metric-label">Present</div><div class="metric-value">${fmt(presentCount)}</div><div class="metric-sub">H/D counts as 0.5</div></div>
+    <div class="metric warn"><div class="metric-label">Week off</div><div class="metric-value">${woCount}</div><div class="metric-sub">${currentShift} shift analysts</div></div>
+    <div class="metric danger"><div class="metric-label">On leave</div><div class="metric-value">${fmt(leaveCount)}</div><div class="metric-sub">${currentShift} shift analysts</div></div>
+  </div>`;
+
+  // Analyst table
+  let analystHtml=`<div class="card">
+    <div class="card-title"><i class="ti ti-users" aria-hidden="true"></i> ${currentShift} Shift Analysts</div>
+    <table class="analyst-table">
+      <thead><tr><th>#</th><th>Analyst</th><th style="text-align:right">Task</th></tr></thead>
+      <tbody>`;
+
+  expected.forEach((a,i)=>{
+    const ac=avatarColors[i%avatarColors.length];
+    const tm=taskMeta[a.todayTask]||{icon:'ti-minus',color:'#888780'};
+    const isPOC=poc===a.name;
+    analystHtml+=`<tr>
+      <td style="color:var(--color-text-tertiary);font-size:11px;width:24px;">${i+1}</td>
+      <td>
+        <div class="analyst-name-cell">
+          <div class="avatar" style="background:${ac}20;color:${ac}">${initials(a.name)}</div>
+          <span>${a.name}${isPOC?'<span class="poc-badge">POC</span>':''}</span>
+        </div>
+      </td>
+      <td style="text-align:right">
+        <span class="task-badge" style="background:${tm.color}15;color:${tm.color};">
+          <i class="ti ${tm.icon}" aria-hidden="true" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>${a.todayTask||'—'}${a.todayTask===HD?' (0.5)':''}
+        </span>
+      </td>
+    </tr>`;
+  });
+
+  if(!expected.length) analystHtml+=`<tr><td colspan="3" style="font-size:13px;color:var(--color-text-tertiary);padding:0.5rem 0;">No analysts found.</td></tr>`;
+  analystHtml+=`</tbody></table>`;
+
+  // Absent chips
+  const allAbsentForShift=[...woList,...leaveList,...hdList];
+  if(allAbsentForShift.length){
+    analystHtml+=`<div class="wo-section">
+      <div class="wo-title"><i class="ti ti-calendar-off" aria-hidden="true"></i>Absent this shift</div>
+      <div class="wo-chips">`;
+    woList.forEach(a=>{
+      analystHtml+=`<span class="wo-chip">${a.name} · WO</span>`;
+    });
+    [...leaveList,...hdList].forEach(a=>{
+      analystHtml+=`<span class="leave-chip">${a.name} · ${a.todayTask}</span>`;
+    });
+    analystHtml+=`</div></div>`;
+  }
+  analystHtml+=`</div>`;
+
+  // Task breakdown from expected analysts
+  const taskCounts={};
+  expected.forEach(a=>{
+    const t=a.todayTask||'Unassigned';
+    taskCounts[t]=(taskCounts[t]||0)+(a.todayTask===HD?0.5:1);
+  });
+  const maxC=Math.max(...Object.values(taskCounts),1);
+
+  let copyText=`Shift count for ${currentShift} shift — ${new Date().toLocaleDateString('en-IN')}\n`;
+  copyText+=`POC: ${poc||'—'}\n`;
+  copyText+=`Expected: ${expected.length} | Present: ${fmt(presentCount)} | WO: ${woCount} | Leave: ${fmt(leaveCount)}\n\nTask breakdown:\n`;
+  Object.entries(taskCounts).sort((a,b)=>b[1]-a[1]).forEach(([t,c])=>{copyText+=`${t}: ${fmt(c)}\n`;});
+
+  let breakdownHtml=`<div class="card">
+    <div class="card-title" style="justify-content:space-between;">
+      <span><i class="ti ti-list-check" aria-hidden="true"></i> Shift count for ${currentShift} shift</span>
+      <button class="copy-btn" id="copy-btn" onclick="copyBreakdown()"><i class="ti ti-copy" style="font-size:11px"></i> Copy</button>
+    </div>
+    <div id="copy-source" style="display:none;">${copyText}</div>
+    <div class="breakdown-list">`;
+
+  if(poc){
+    breakdownHtml+=`<div class="poc-row">
+      <i class="ti ti-shield-check" aria-hidden="true" style="font-size:14px;color:var(--color-text-warning)"></i>
+      <span class="poc-label">POC :</span><span class="poc-name">${poc}</span>
+    </div>`;
+  }
+
+  breakdownHtml+=`<div class="summary-rows">
+    <div class="summary-row"><span class="summary-label"><i class="ti ti-users" aria-hidden="true" style="font-size:12px;vertical-align:-1px;margin-right:3px"></i>Total expected</span><span class="summary-val">${expected.length}</span></div>
+    <div class="summary-row"><span class="summary-label"><i class="ti ti-user-check" aria-hidden="true" style="font-size:12px;vertical-align:-1px;margin-right:3px"></i>Present</span><span class="summary-val" style="color:var(--color-text-success)">${fmt(presentCount)}</span></div>
+    <div class="summary-row"><span class="summary-label"><i class="ti ti-calendar-off" aria-hidden="true" style="font-size:12px;vertical-align:-1px;margin-right:3px"></i>Week off</span><span class="summary-val">${woCount}</span></div>
+    <div class="summary-row"><span class="summary-label"><i class="ti ti-user-off" aria-hidden="true" style="font-size:12px;vertical-align:-1px;margin-right:3px"></i>On leave</span><span class="summary-val">${fmt(leaveCount)}</span></div>
+  </div>
+  <div class="divider-row">Tasks</div>`;
+
+  Object.entries(taskCounts).sort((a,b)=>b[1]-a[1]).forEach(([t,c])=>{
+    const tm=taskMeta[t]||{icon:'ti-minus',color:'#888780'};
+    const pct=Math.round((c/maxC)*100);
+    breakdownHtml+=`<div class="breakdown-item">
+      <div class="b-icon" style="background:${tm.color}18"><i class="ti ${tm.icon}" aria-hidden="true" style="color:${tm.color};font-size:12px"></i></div>
+      <span class="b-name">${t}</span>
+      <div class="b-bar-wrap"><div class="b-bar" style="width:${pct}%;background:${tm.color}"></div></div>
+      <span class="b-count">${fmt(c)}</span>
+    </div>`;
+  });
+
+  if(!Object.keys(taskCounts).length) breakdownHtml+=`<div style="font-size:13px;color:var(--color-text-tertiary);">No tasks assigned.</div>`;
+  breakdownHtml+=`</div></div>`;
+
+  document.getElementById('main-content').innerHTML=metricsHtml+`<div class="two-col">${analystHtml}${breakdownHtml}</div>`;
+}
+
+setDateLabel();
+loadAll();
+</script>
+</body></html>
